@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SkyUz — Avia va poyezd chiptalari</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* ===== O'zgaruvchilar / Mavzular ===== */
+:root{--bg1:#060A14;--bg2:#0B1224;--bg3:#10223f;--txt:#F4EFE6;--mut:#9AA3B8;--gl:rgba(255,255,255,.1);--gb:rgba(255,255,255,.25);--acc:#D6B36A;--acc2:#F2DFA7;--ok:#2BB89A;--err:#ff5d7a;--sh:0 20px 60px rgba(0,0,0,.35);--r:24px;--inp:rgba(255,255,255,.08);--pop:rgba(24,26,70,.96);color-scheme:dark}
+[data-theme=light]{--bg1:#F7F3EA;--bg2:#efe6d2;--bg3:#e3ebf8;--txt:#0B1224;--mut:rgba(11,18,36,.66);--acc:#B8913F;--acc2:#D6B36A;--gl:rgba(255,255,255,.45);--gb:rgba(255,255,255,.85);--sh:0 20px 50px rgba(60,80,140,.2);--inp:rgba(255,255,255,.6);--pop:rgba(255,255,255,.97);color-scheme:light}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{font-family:Manrope,system-ui,sans-serif;color:var(--txt);min-height:100vh;background:radial-gradient(60% 50% at 15% 10%,var(--bg2),transparent),radial-gradient(50% 50% at 90% 30%,var(--bg3),transparent),var(--bg1);background-attachment:fixed;padding-bottom:84px}
+button,input,select{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+option{color:#111}
+.orbs i{position:fixed;border-radius:50%;filter:url(#liq) blur(50px);opacity:.55;z-index:-1;will-change:transform;animation:fl 22s ease-in-out infinite alternate}
+.orbs i:nth-child(1){width:420px;height:420px;background:#3B6FE0;top:-80px;left:-80px}
+.orbs i:nth-child(2){width:360px;height:360px;background:#D6B36A;right:-60px;top:30%;animation-duration:28s}
+.orbs i:nth-child(3){width:340px;height:340px;background:#2BB89A;left:30%;bottom:-120px;animation-duration:25s}
+@keyframes fl{to{transform:translate3d(80px,-60px,0) scale(1.15)}}
+/* ===== Liquid glass ===== */
+.glass{position:relative;background:var(--gl);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);border:1px solid var(--gb);border-radius:var(--r);box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,.35),inset 0 0 30px rgba(255,255,255,.06);overflow:hidden}
+.glass.ov{overflow:visible}
+.glass::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(260px circle at var(--mx,50%) var(--my,0),rgba(255,255,255,.26),transparent 60%)}
+.glass:hover::before{opacity:1}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.glass{background:var(--pop)}}
+/* ===== Umumiy ===== */
+.wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+section{margin:56px auto}
+h1{font-size:clamp(2.1rem,6vw,4rem);font-weight:800;line-height:1.05;letter-spacing:-.03em}
+h2{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;margin-bottom:20px}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--mut);margin:14px 0 26px;max-width:560px}
+.btn{border:0;border-radius:14px;padding:12px 20px;font-weight:700;color:#1a1405;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 8px 24px rgba(214,179,106,.35);transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px)}.btn:active{transform:scale(.96)}
+.btn.ghost{background:var(--inp);color:var(--txt);box-shadow:none;border:1px solid var(--gb)}
+.btn:disabled{opacity:.45;pointer-events:none}
+.fu{animation:fu .7s both}@keyframes fu{from{opacity:0;transform:translateY(24px)}}
+/* ===== Navbar ===== */
+.nav{position:sticky;top:10px;z-index:50;margin:10px auto 0;max-width:1180px;width:calc(100% - 28px);display:flex;align-items:center;gap:18px;padding:10px 16px;border-radius:22px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:1.3rem;color:inherit;text-decoration:none}
+.logo svg{width:28px;height:28px;fill:var(--acc)}
+.links{display:flex;gap:6px;margin-left:12px}.links a{color:var(--mut);text-decoration:none;padding:8px 12px;border-radius:12px;font-weight:600}.links a:hover{background:var(--inp);color:var(--txt)}
+.navr{margin-left:auto;display:flex;gap:8px;align-items:center}
+.ib{width:40px;height:40px;border-radius:12px;border:1px solid var(--gb);background:var(--inp);font-size:1.1rem}
+.user{display:flex;align-items:center;gap:8px;border:1px solid var(--gb);background:var(--inp);border-radius:14px;padding:4px 12px 4px 4px}
+.av{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#1a1405;font-weight:800;font-size:.85rem}
+.ud{position:relative}.menu{position:absolute;right:0;top:48px;min-width:190px;padding:8px;background:var(--pop)}
+.menu button{display:block;width:100%;text-align:left;border:0;background:none;padding:10px 12px;border-radius:10px}.menu button:hover{background:var(--inp)}
+.bnav{display:none;position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:50;border-radius:22px;padding:6px;justify-content:space-around}
+.bnav button{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.72rem;padding:6px 14px;border-radius:14px;color:var(--mut)}.bnav button b{font-size:1.25rem}
+@media(max-width:800px){.links,.nav .btn.ghost,.un{display:none}.bnav{display:flex}}
+/* ===== Hero / Qidiruv ===== */
+.hero{padding-top:56px}
+.sp{padding:22px;margin-top:10px}
+.tabs{display:flex;gap:6px;background:var(--inp);padding:5px;border-radius:16px;width:max-content;max-width:100%;margin-bottom:18px}
+.tabs button{border:0;background:none;padding:10px 20px;border-radius:12px;font-weight:700;color:var(--mut);transition:.25s}
+.tabs button[aria-selected=true]{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#1a1405}
+.panel{animation:fu .4s both}.panel[hidden]{display:none}
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;align-items:end}
+.f{position:relative;display:flex;flex-direction:column;gap:6px}.f>span{font-size:.78rem;color:var(--mut);font-weight:600}
+.inp,.f input,.f select{background:var(--inp);border:1px solid var(--gb);border-radius:14px;padding:12px 14px;width:100%;text-align:left;min-height:46px}
+.swap{align-self:end;width:46px;height:46px;border-radius:50%;border:1px solid var(--gb);background:var(--inp);font-size:1.2rem;transition:transform .5s;justify-self:center}
+.ac{position:absolute;top:100%;left:0;right:0;margin-top:4px;z-index:20;list-style:none;padding:6px;border-radius:14px;background:var(--pop);border:1px solid var(--gb);box-shadow:var(--sh)}
+.ac li{padding:9px 10px;border-radius:9px;cursor:pointer;display:flex;justify-content:space-between}.ac li.on,.ac li:hover{background:var(--inp)}.ac small{color:var(--mut)}
+.pop{position:absolute;top:100%;left:0;margin-top:4px;z-index:20;min-width:240px;padding:12px;background:var(--pop)}
+.pop div{display:flex;justify-content:space-between;align-items:center;padding:6px 0;gap:12px}.pop small{display:block;color:var(--mut)}
+.pop button{width:32px;height:32px;border-radius:10px;border:1px solid var(--gb);background:var(--inp)}
+/* ===== Natijalar ===== */
+.bar{display:flex;flex-wrap:wrap;gap:12px;padding:14px;margin-bottom:16px;align-items:end}
+.bar .f{min-width:140px;flex:1}
+.sort{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}.sort button{border:1px solid var(--gb);background:var(--inp);padding:8px 14px;border-radius:12px;font-weight:600}.sort button[aria-pressed=true]{background:var(--acc);color:#1a1405}
+.card{padding:18px 20px;margin-bottom:12px;display:grid;grid-template-columns:1.1fr 2fr 1fr;gap:16px;align-items:center;transition:transform .25s}
+.card:hover{transform:translateY(-3px)}
+.al{display:flex;gap:12px;align-items:center}.lg{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:#1a1405;font-size:.8rem}
+small{color:var(--mut)}
+.tt{display:flex;align-items:center;gap:14px;justify-content:center}.tt b{font-size:1.35rem;display:block}
+.ln{flex:1;text-align:center;max-width:200px}.ln i{display:block;height:2px;background:linear-gradient(90deg,var(--acc),var(--acc2));margin:5px 0;border-radius:2px}
+.pr{text-align:right;display:flex;flex-direction:column;gap:8px;align-items:flex-end}.pr>b{font-size:1.25rem}
+.wg{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.wg span{background:var(--inp);border:1px solid var(--gb);border-radius:10px;padding:5px 10px;font-size:.8rem}
+.empty{text-align:center;padding:40px;color:var(--mut)}
+.sk{height:96px;margin-bottom:12px;background:linear-gradient(90deg,var(--inp),var(--gl),var(--inp));background-size:200% 100%;animation:sh 1.1s linear infinite;border-radius:var(--r)}@keyframes sh{to{background-position:-200% 0}}
+@media(max-width:800px){.card{grid-template-columns:1fr}.pr{align-items:stretch;text-align:left}}
+/* ===== Kartalar ===== */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.rt{padding:22px;border:1px solid var(--gb);text-align:left;color:inherit;transition:transform .25s}.rt:hover{transform:translateY(-5px)}
+.rt b{font-size:1.15rem;display:block;margin:8px 0 4px}.rt .tag{font-size:.72rem;background:var(--inp);padding:3px 9px;border-radius:99px}
+.rt .p{margin-top:12px;font-weight:800;color:var(--acc)}
+.ft{padding:24px}.ft h3{margin:10px 0 6px}.ft .ic{font-size:2rem}
+footer{padding:36px 18px 20px}footer .fc{padding:28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:24px}
+footer a{display:block;color:var(--mut);text-decoration:none;padding:3px 0}footer a:hover{color:var(--txt)}
+.soc{display:flex;gap:10px}.soc a{width:40px;height:40px;border-radius:12px;border:1px solid var(--gb);display:grid;place-items:center;background:var(--inp)}.soc svg{width:18px;height:18px;fill:currentColor}
+/* ===== Modal ===== */
+.ovl{position:fixed;inset:0;z-index:100;background:rgba(5,8,25,.55);display:grid;place-items:center;padding:14px;animation:fi .25s}@keyframes fi{from{opacity:0}}
+.ovl[hidden]{display:none}
+.modal{width:100%;max-width:460px;max-height:92vh;overflow:auto;padding:26px;background:var(--pop);animation:fu .35s both}
+.modal .x{position:absolute;right:14px;top:14px;width:36px;height:36px;border-radius:11px;border:1px solid var(--gb);background:var(--inp);z-index:2}
+.modal h3{font-size:1.4rem;margin-bottom:14px}
+.fl2{margin-bottom:12px}.fl2 label{font-size:.8rem;color:var(--mut);font-weight:600;display:block;margin-bottom:5px}
+.iw{position:relative}.iw input,.fl2>input{width:100%;background:var(--inp);border:1px solid var(--gb);border-radius:13px;padding:12px 14px;transition:box-shadow .25s,border-color .25s}
+.eye{position:absolute;right:8px;top:7px;border:0;background:none;font-size:1.1rem}
+.msg{display:block;min-height:1em;font-size:.76rem;margin-top:4px}
+.fl2.ok input{border-color:var(--ok);box-shadow:0 0 14px rgba(46,229,157,.4)}.fl2.ok .msg{color:var(--ok)}
+.fl2.bad input{border-color:var(--err);box-shadow:0 0 14px rgba(255,93,122,.4)}.fl2.bad .msg{color:var(--err)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.str{display:flex;gap:4px;margin-top:6px}.str i{flex:1;height:5px;border-radius:3px;background:var(--inp)}
+.chk{display:flex;gap:8px;align-items:center;font-size:.85rem;margin:8px 0}
+.seats{display:grid;gap:8px;justify-content:center;margin:14px 0}
+.seat{width:40px;height:38px;border-radius:10px;border:1px solid var(--gb);background:var(--inp);font-size:.75rem;transition:transform .15s}
+.seat:hover:not(:disabled){transform:scale(1.08)}.seat:disabled{opacity:.3;background:#777;cursor:not-allowed}
+.seat.sel{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#1a1405;box-shadow:0 0 14px var(--acc)}
+.pay{display:flex;gap:10px;align-items:center;padding:14px;border:1px solid var(--gb);border-radius:14px;margin-bottom:10px;cursor:pointer;background:var(--inp)}.pay:has(input:checked){border-color:var(--acc);box-shadow:0 0 16px rgba(214,179,106,.4)}
+.ok-c{text-align:center}.ok-c svg.ck{width:90px;height:90px}.ck circle,.ck path{fill:none;stroke:var(--ok);stroke-width:5;stroke-linecap:round;stroke-dasharray:300;stroke-dashoffset:300;animation:dr .9s .1s forwards}.ck path{animation-delay:.7s;stroke-dasharray:60;stroke-dashoffset:60}@keyframes dr{to{stroke-dashoffset:0}}
+.qr{width:150px;height:150px;background:#fff;color:#111;padding:8px;border-radius:14px;margin:12px auto;display:block;fill:#111}
+.sum{background:var(--inp);border-radius:14px;padding:12px;margin-bottom:14px;font-size:.9rem}
+.spin{width:44px;height:44px;border:4px solid var(--gb);border-top-color:var(--acc);border-radius:50%;margin:30px auto;animation:rot .8s linear infinite}@keyframes rot{to{transform:rotate(360deg)}}
+#toasts{position:fixed;top:14px;right:14px;z-index:200;display:grid;gap:8px}
+.toast{padding:12px 18px;border-radius:14px;background:var(--pop);border:1px solid var(--gb);box-shadow:var(--sh);animation:fu .3s both;border-left:4px solid var(--ok)}.toast.err{border-left-color:var(--err)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<!-- Suyuqlik (liquid) buzilishi uchun SVG filtr -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="liq"><feTurbulence type="fractalNoise" baseFrequency=".006 .01" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="60"/></filter></svg>
+<div class="orbs" aria-hidden="true"><i></i><i></i><i></i></div>
+<div id="toasts" aria-live="polite"></div>
+
+<header class="glass ov nav fu">
+  <a class="logo" href="#top" aria-label="SkyUz bosh sahifa"><svg viewBox="0 0 24 24"><path d="M21 3 2 11l6 2.5L10.5 20l3-4.5 5 3.5z"/></svg>SkyUz</a>
+  <nav class="links" aria-label="Asosiy menyu"><a href="#search" data-tab="avia">Avia</a><a href="#search" data-tab="train">Poyezd</a><a href="#aksiya">Aksiyalar</a><a href="#aloqa">Aloqa</a></nav>
+  <div class="navr"><button class="ib" id="theme" aria-label="Mavzuni almashtirish">◐</button><div id="auth" class="navr"></div></div>
+</header>
+
+<main id="top">
+<div class="wrap hero">
+  <h1 class="fu">Osmonda va relsda —<br><em>eng arzon chiptalar</em></h1>
+  <p class="sub fu" style="animation-delay:.1s">O'zbekiston bo'ylab va xalqaro yo'nalishlarda aviachipta hamda poyezd chiptalarini bir joyda qidiring va bron qiling.</p>
+
+  <div class="glass ov sp fu" id="search" style="animation-delay:.2s">
+    <div class="tabs" role="tablist" aria-label="Chipta turi"><button role="tab" id="t-avia" aria-selected="true" data-tab="avia">✈️ Avia</button><button role="tab" id="t-train" aria-selected="false" data-tab="train">🚆 Poyezd</button></div>
+
+    <form class="panel" id="p-avia" role="tabpanel" aria-labelledby="t-avia" novalidate>
+      <div class="fg">
+        <label class="f"><span>Qayerdan</span><input id="a-from" autocomplete="off" role="combobox" aria-autocomplete="list" placeholder="Shahar"></label>
+        <button type="button" class="swap" data-swap="a" aria-label="Shaharlarni almashtirish">⇄</button>
+        <label class="f"><span>Qayerga</span><input id="a-to" autocomplete="off" role="combobox" aria-autocomplete="list" placeholder="Shahar"></label>
+        <label class="f"><span>Jo'nash sanasi</span><input type="date" id="a-date"></label>
+        <label class="f"><span>Qaytish sanasi (ixtiyoriy)</span><input type="date" id="a-ret"></label>
+        <div class="f"><span>Yo'lovchilar</span><button type="button" class="inp" id="paxb" aria-expanded="false" aria-controls="pop">1 yo'lovchi</button>
+          <div class="pop glass ov" id="pop" hidden>
+            <div><span>Kattalar<small>12 yosh va katta</small></span><span><button type="button" data-p="a" data-d="-1" aria-label="Kattalarni kamaytirish">−</button> <b id="n-a">1</b> <button type="button" data-p="a" data-d="1" aria-label="Kattalarni oshirish">+</button></span></div>
+            <div><span>Bolalar<small>2–11 yosh</small></span><span><button type="button" data-p="c" data-d="-1" aria-label="Bolalarni kamaytirish">−</button> <b id="n-c">0</b> <button type="button" data-p="c" data-d="1" aria-label="Bolalarni oshirish">+</button></span></div>
+            <div><span>Chaqaloqlar<small>2 yoshgacha</small></span><span><button type="button" data-p="i" data-d="-1" aria-label="Chaqaloqlarni kamaytirish">−</button> <b id="n-i">0</b> <button type="button" data-p="i" data-d="1" aria-label="Chaqaloqlarni oshirish">+</button></span></div>
+          </div></div>
+        <label class="f"><span>Klass</span><select id="a-cls"><option>Ekonom</option><option>Biznes</option></select></label>
+        <button class="btn" type="submit" style="min-height:46px">Chipta qidirish</button>
+      </div>
+    </form>
+
+    <form class="panel" id="p-train" role="tabpanel" aria-labelledby="t-train" hidden novalidate>
+      <div class="fg">
+        <label class="f"><span>Qayerdan</span><input id="t-from" autocomplete="off" role="combobox" aria-autocomplete="list" placeholder="Shahar"></label>
+        <button type="button" class="swap" data-swap="t" aria-label="Shaharlarni almashtirish">⇄</button>
+        <label class="f"><span>Qayerga</span><input id="t-to" autocomplete="off" role="combobox" aria-autocomplete="list" placeholder="Shahar"></label>
+        <label class="f"><span>Sana</span><input type="date" id="t-date"></label>
+        <label class="f"><span>Yo'lovchilar soni</span><select id="t-pax"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label>
+        <label class="f"><span>Vagon turi</span><select id="t-wag"><option>Barchasi</option><option>Plats-kart</option><option>Kupe</option><option>SV/Lyuks</option><option>Business</option><option>Economy</option></select></label>
+        <button class="btn" type="submit" style="min-height:46px">Poyezd qidirish</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<section class="wrap" id="results" aria-live="polite" hidden></section>
+
+<section class="wrap" id="aksiya">
+  <h2>Ommabop yo'nalishlar va aksiyalar</h2>
+  <div class="grid" id="routes"></div>
+</section>
+
+<section class="wrap">
+  <div class="grid">
+    <div class="glass ft"><div class="ic">💸</div><h3>Eng arzon narxlar</h3><small>Barcha aviakompaniyalar va poyezdlar narxlarini bir joyda solishtiring.</small></div>
+    <div class="glass ft"><div class="ic">⚡</div><h3>Tez bron</h3><small>Bir necha bosishda chiptangizni rasmiylashtiring.</small></div>
+    <div class="glass ft"><div class="ic">🔒</div><h3>Xavfsiz to'lov</h3><small>Payme, Click, Uzcard va Humo orqali qulay to'lov.</small></div>
+    <div class="glass ft"><div class="ic">🎧</div><h3>24/7 yordam</h3><small>Mutaxassislarimiz kechayu kunduz yordamga tayyor.</small></div>
+  </div>
+</section>
+</main>
+
+<footer class="wrap" id="aloqa">
+  <div class="glass fc">
+    <div><a class="logo" href="#top"><svg viewBox="0 0 24 24"><path d="M21 3 2 11l6 2.5L10.5 20l3-4.5 5 3.5z"/></svg>SkyUz</a><small>Avia va temir yo'l chiptalari — O'zbekiston uchun.</small></div>
+    <div><b>Xizmatlar</b><a href="#search" data-tab="avia">Aviachiptalar</a><a href="#search" data-tab="train">Poyezd chiptalari</a><a href="#aksiya">Aksiyalar</a></div>
+    <div><b>Aloqa</b><a href="tel:+998712000000">+998 71 200 00 00</a><a href="mailto:info@skyuz.uz">info@skyuz.uz</a><small>Toshkent sh., Amir Temur ko'chasi</small></div>
+    <div><b>Ijtimoiy tarmoqlar</b><div class="soc"><a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24"><path d="M21 3 2 11l6 2.5L10.5 20l3-4.5 5 3.5z"/></svg></a><a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm5 3.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 0 1 12 7.5zm0 2A2.5 2.5 0 1 0 14.5 12 2.5 2.5 0 0 0 12 9.5z"/></svg></a><a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M14 8V6c0-1 .3-1.5 1.600-1.500H17V2h-2.500C11.500 2 10 3.700 10 6v2H8v3h2v11h4V11h2.600L17 8z"/></svg></a></div></div>
+  </div>
+  <p style="text-align:center;margin-top:16px"><small>© 2026 SkyUz. Demo loyiha — haqiqiy chipta sotilmaydi.</small></p>
+</footer>
+
+<nav class="glass bnav" aria-label="Pastki menyu"><button data-tab="avia"><b>✈️</b>Avia</button><button data-tab="train"><b>🚆</b>Poyezd</button><button data-act="tickets"><b>🎫</b>Chiptalar</button><button data-act="me"><b>👤</b>Profil</button></nav>
+
+<div class="ovl" id="mdl" hidden><div class="glass ov modal" role="dialog" aria-modal="true" id="mbox"><button class="x" data-close aria-label="Yopish">✕</button><div id="mbody"></div></div></div>
+
+<script>
+"use strict";
+/* ===== 1. YORDAMCHI FUNKSIYALAR ===== */
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>(Math.round(n/1000)*1000).toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ')+" so'm";
+const tm=m=>{m=(m%1440+1440)%1440;return String(m/60|0).padStart(2,'0')+':'+String(m%60).padStart(2,'0')};
+const dur=m=>`${m/60|0} soat ${m%60} daq`;
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const MO=['yanvar','fevral','mart','aprel','may','iyun','iyul','avgust','sentabr','oktabr','noyabr','dekabr'];
+const fd=d=>{const[y,m,x]=d.split('-');return `${+x}-${MO[m-1]}, ${y}`};
+const iso=(add=0)=>{const d=new Date(Date.now()+add*864e5);return d.toISOString().slice(0,10)};
+function seeded(s){s=String(s);let h=1779033703^s.length;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=h<<13|h>>>19}return()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);return((h^=h>>>16)>>>0)/4294967296}}
+function toast(m,t){const e=document.createElement('div');e.className='toast '+(t||'');e.textContent=m;$('#toasts').appendChild(e);setTimeout(()=>e.remove(),3400)}
+const store={get:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
+
+/* ===== 2. MA'LUMOTLAR (mock) ===== */
+const C={'Toshkent':[41.26,69.28,'TAS'],'Samarqand':[39.65,66.96,'SKD'],'Buxoro':[39.77,64.43,'BHK'],'Xiva / Urganch':[41.55,60.63,'UGC'],'Nukus':[42.46,59.61,'NCU'],'Andijon':[40.78,72.34,'AZN'],"Farg'ona":[40.38,71.78,'FEG'],'Namangan':[41.0,71.67,'NMA'],'Qarshi':[38.86,65.79,'KSQ'],'Termiz':[37.22,67.28,'TMJ'],'Navoiy':[40.1,65.37,'NVI'],'Jizzax':[40.12,67.84,''],'Guliston':[40.49,68.78,''],'Istanbul':[41.01,28.98,'IST'],'Dubay':[25.2,55.27,'DXB'],'Moskva':[55.75,37.62,'SVO'],'Seul':[37.57,126.98,'ICN'],'Dehli':[28.61,77.21,'DEL'],'Olmaota':[43.24,76.89,'ALA']};
+const NAMES=Object.keys(C),RAIL=NAMES.slice(0,13),AIR=NAMES.filter(n=>C[n][2]);
+const km=(a,b)=>{const r=x=>x*Math.PI/180,[la,lo]=C[a],[lb,ob]=C[b];const h=Math.sin(r(lb-la)/2)**2+Math.cos(r(la))*Math.cos(r(lb))*Math.sin(r(ob-lo)/2)**2;return 2*6371*Math.asin(Math.sqrt(h))};
+const AL=[{n:'Uzbekistan Airways',f:1.05,d:1,i:1},{n:'Qanot Sharq',f:.9,d:1,i:1},{n:'Air Samarkand',f:.88,d:1},{n:'Centrum Air',f:.85,d:1,i:1},{n:'Turkish Airlines',f:1.1,i:1},{n:'Aeroflot',f:1.15,i:1},{n:'flydubai',f:.95,i:1},{n:'Air Astana',f:1,i:1},{n:'Korean Air',f:1.3,i:1},{n:'Air India',f:1,i:1}];
+/* Poyezdlar: st = [to'xtash, jo'nashdan keyingi daqiqa], dep = jo'nash vaqtlari (daqiqa) */
+const TR=[
+{n:'Afrosiyob',no:768,f:1,cls:['Economy','Business'],dep:[450,720,1020],st:[['Toshkent',0],['Guliston',55],['Jizzax',100],['Samarqand',135],['Navoiy',195],['Buxoro',245]]},
+{n:'Sharq',no:10,f:.9,cls:['Economy','Business'],dep:[540,1080],st:[['Toshkent',0],['Guliston',70],['Jizzax',140],['Samarqand',230],['Navoiy',330],['Buxoro',430]]},
+{n:'Registon',no:30,f:.8,cls:['Plats-kart','Kupe','SV/Lyuks'],dep:[1320],st:[['Toshkent',0],['Jizzax',150],['Samarqand',260]]},
+{n:'Nasaf',no:44,f:.8,cls:['Plats-kart','Kupe','SV/Lyuks'],dep:[1260],st:[['Toshkent',0],['Jizzax',170],['Samarqand',290],['Qarshi',430]]},
+{n:'Surxon',no:52,f:.8,cls:['Plats-kart','Kupe','SV/Lyuks'],dep:[1140],st:[['Toshkent',0],['Samarqand',300],['Qarshi',430],['Termiz',720]]},
+{n:'Shosh',no:62,f:.8,cls:['Plats-kart','Kupe','SV/Lyuks'],dep:[480,1200],st:[['Toshkent',0],['Namangan',260],['Andijon',340],["Farg'ona",420]]},
+{n:'Xorazm',no:70,f:.8,cls:['Plats-kart','Kupe','SV/Lyuks'],dep:[1080],st:[['Toshkent',0],['Samarqand',300],['Navoiy',400],['Buxoro',520],['Xiva / Urganch',900]]},
+{n:'Qoraqalpog\'iston',no:80,f:.8,cls:['Plats-kart','Kupe','SV/Lyuks','Business'],dep:[1020],st:[['Toshkent',0],['Samarqand',300],['Navoiy',400],['Buxoro',520],['Xiva / Urganch',900],['Nukus',1100]]}];
+const RATE={'Economy':800,'Business':1200,'Plats-kart':330,'Kupe':520,'SV/Lyuks':950},TOT={'Economy':48,'Business':32,'Plats-kart':52,'Kupe':36,'SV/Lyuks':18};
+
+function genFlights(q){
+  const d=km(q.from,q.to),intl=NAMES.indexOf(q.from)>12||NAMES.indexOf(q.to)>12,pool=AL.filter(a=>intl?a.i:a.d),out=[];
+  for(let k=0;k<14;k++){const a=pool[k%pool.length],st=intl&&Math.random()<.35?1:0;
+    const pr=(160000+d*(intl?520:430))*a.f*(1+(Math.random()-.5)*.14)*(st?.88:1)*(q.cls==='Biznes'?2.4:1)*(q.ret?1.9:1);
+    out.push({id:'f'+k,al:a.n,dep:rnd(5,23)*60+rnd(0,3)*15,du:Math.round(45+d/13+st*rnd(90,170)+rnd(-5,10)),st,pr,h:(a.n.length*37)%360})}
+  return out}
+function genTrains(q){
+  const out=[],dist=km(q.from,q.to)*1.25;
+  TR.forEach(t=>[0,1].forEach(dir=>{
+    const tot=t.st[t.st.length-1][1],s=dir?t.st.map(([c,m])=>[c,tot-m]).reverse():t.st;
+    const i=s.findIndex(x=>x[0]===q.from),j=s.findIndex(x=>x[0]===q.to);if(i<0||j<=i)return;
+    t.dep.forEach((D,k)=>{
+      const wag=t.cls.filter(c=>q.wag==='Barchasi'||c===q.wag).map(c=>({t:c,price:RATE[c]*dist*t.f*(.97+Math.random()*.06),seats:Math.random()<.1?0:rnd(4,TOT[c])}));
+      if(!wag.length)return;
+      out.push({id:`t${t.no}-${dir}-${k}`,n:t.n,no:t.no+dir+k*2,dep:D+s[i][1],arr:D+s[j][1],du:s[j][1]-s[i][1],wag})})}));
+  return out}
+
+/* ===== 3. AVTORIZATSIYA ===== */
+const V={ism:v=>v.trim().length>=2||'Kamida 2 ta harf kiriting',fam:v=>v.trim().length>=2||'Kamida 2 ta harf kiriting',
+ tel:v=>/^\+998 \d{2} \d{3} \d{2} \d{2}$/.test(v)||"Telefon raqamini to'liq kiriting",
+ email:v=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)||"Email manzili noto'g'ri",
+ pw:v=>(v.length>=8&&/[A-Za-z]/.test(v)&&/\d/.test(v))||"Kamida 8 belgi, harf va raqam bo'lsin",
+ pw2:(v,f)=>(v!==''&&v===f.querySelector('#s-pw').value)||'Parollar mos kelmadi',
+ id:v=>(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)||/^\+998 \d{2} \d{3} \d{2} \d{2}$/.test(v))||"Telefon (+998...) yoki email kiriting",
+ lpw:v=>v.length>0||'Parolni kiriting'};
+const mask=v=>{let d=v.replace(/\D/g,'');if(d.startsWith('998'))d=d.slice(3);d=d.slice(0,9);let o='+998';if(d.length)o+=' '+d.slice(0,2);if(d.length>2)o+=' '+d.slice(2,5);if(d.length>5)o+=' '+d.slice(5,7);if(d.length>7)o+=' '+d.slice(7,9);return o};
+async function sha(p,salt){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(salt+p));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+const users=()=>store.get('skyuz_users',[]);
+const me=()=>{const id=localStorage.getItem('skyuz_s')||sessionStorage.getItem('skyuz_s');return users().find(u=>u.id===id)};
+let pending=null;
+function checkF(el,f){const r=V[el.dataset.v](el.value,f),w=el.closest('.fl2');w.classList.toggle('ok',r===true);w.classList.toggle('bad',r!==true);w.querySelector('.msg').textContent=r===true?'✓ Yaxshi':r;return r===true}
+function strength(v){const s=(v.length>=8)+(/[a-z]/.test(v)&&/[A-Z]/.test(v))+/\d/.test(v)+(/[^A-Za-z0-9]/.test(v)||v.length>=12);return Math.min(s,4)}
+const fld=(id,lb,type,ph,x='')=>`<div class="fl2"><label for="${id}">${lb}</label><div class="iw"><input id="${id}" type="${type}" placeholder="${ph}" data-v="${id.replace(/^[ls]-/,'')}" ${x}>${type==='password'?`<button type="button" class="eye" data-eye="${id}" aria-label="Parolni ko'rsatish yoki yashirish">👁</button>`:''}</div><small class="msg" aria-live="polite"></small></div>`;
+function authModal(tab){
+  const L=tab==='login';
+  modal(`<div class="tabs" role="tablist"><button role="tab" aria-selected="${L}" data-auth="login">Kirish</button><button role="tab" aria-selected="${!L}" data-auth="signup">Ro'yxatdan o'tish</button></div>`+(L?
+  `<form id="af" data-m="login" novalidate>${fld('l-id','Telefon yoki Email','text','+998 90 123 45 67 yoki email','autocomplete="username"')}${fld('l-pw','Parol','password','Parolingiz','autocomplete="current-password"')}
+   <div class="chk"><label><input type="checkbox" id="l-rem"> Meni eslab qol</label><a href="#" data-act="forgot" style="margin-left:auto;color:var(--acc)">Parolni unutdim</a></div><button class="btn" style="width:100%">Kirish</button></form>`:
+  `<form id="af" data-m="signup" novalidate><div class="row2">${fld('s-ism','Ism','text','Ism')}${fld('s-fam','Familiya','text','Familiya')}</div>${fld('s-tel','Telefon','tel','+998 90 123 45 67','data-mask')}${fld('s-email','Email','email','email@misol.uz')}${fld('s-pw','Parol','password','Kamida 8 belgi','autocomplete="new-password"')}
+   <div class="str" id="str" aria-hidden="true"><i></i><i></i><i></i><i></i></div><small id="strl"></small>${fld('s-pw2','Parolni takrorlang','password','Parolni qayta kiriting','autocomplete="new-password"')}
+   <div class="chk"><label><input type="checkbox" id="s-agree"> Shartlarga roziman</label></div><button class="btn" style="width:100%">Ro'yxatdan o'tish</button></form>`));
+}
+async function submitAuth(f){
+  const els=[...f.querySelectorAll('[data-v]')];let ok=els.map(e=>checkF(e,f)).every(Boolean);
+  if(f.dataset.m==='signup'&&!$('#s-agree').checked){ok=false;toast("Shartlarga rozilik bering",'err')}
+  if(!ok)return toast("Iltimos, xatolarni to'g'rilang",'err');
+  try{
+    const all=users();
+    if(f.dataset.m==='signup'){
+      const tel=$('#s-tel').value,em=$('#s-email').value.trim().toLowerCase();
+      if(all.some(u=>u.tel===tel||u.email===em))return toast("Bu telefon yoki email allaqachon ro'yxatdan o'tgan",'err');
+      const salt=crypto.getRandomValues(new Uint32Array(2)).join(''),u={id:'u'+Date.now(),ism:$('#s-ism').value.trim(),fam:$('#s-fam').value.trim(),tel,email:em,salt,hash:await sha($('#s-pw').value,salt)};
+      all.push(u);store.set('skyuz_users',all);loginDone(u,true)
+    }else{
+      const id=$('#l-id').value.trim().toLowerCase(),u=all.find(x=>x.email===id||x.tel===$('#l-id').value.trim());
+      if(!u||await sha($('#l-pw').value,u.salt)!==u.hash)return toast("Telefon/email yoki parol noto'g'ri",'err');
+      loginDone(u,$('#l-rem').checked)}
+  }catch(e){toast("Brauzer SHA-256 ni qo'llab-quvvatlamaydi (https yoki localhost kerak)",'err')}
+}
+function loginDone(u,rem){(rem?localStorage:sessionStorage).setItem('skyuz_s',u.id);closeModal();renderNav();toast(`Xush kelibsiz, ${u.ism}!`);if(pending){const p=pending;pending=null;setTimeout(()=>book(p),350)}}
+function logout(){localStorage.removeItem('skyuz_s');sessionStorage.removeItem('skyuz_s');renderNav();toast("Siz tizimdan chiqdingiz")}
+function renderNav(){const u=me();$('#auth').innerHTML=u?`<div class="ud"><button class="user" id="ub" aria-haspopup="menu" aria-expanded="false"><span class="av">${esc((u.ism[0]+u.fam[0]).toUpperCase())}</span><span class="un">${esc(u.ism)}</span></button><div class="menu glass ov" id="um" hidden role="menu"><button role="menuitem" data-act="me">Profil</button><button role="menuitem" data-act="tickets">Mening chiptalarim</button><button role="menuitem" data-act="logout">Chiqish</button></div></div>`:`<button class="btn ghost" data-act="login">Kirish</button><button class="btn" data-act="signup">Ro'yxatdan o'tish</button>`}
+
+/* ===== 4. MODAL ===== */
+let lastFocus=null;
+function modal(h,w){lastFocus=document.activeElement;$('#mbody').innerHTML=h;$('#mbox').style.maxWidth=w||'460px';$('#mdl').hidden=false;document.body.style.overflow='hidden';const i=$('#mbody input,#mbody button');i&&i.focus()}
+function closeModal(){$('#mdl').hidden=true;document.body.style.overflow='';lastFocus&&lastFocus.focus&&lastFocus.focus()}
+
+/* ===== 5. QIDIRUV FORMALARI ===== */
+const P={a:1,c:0,i:0};
+function ac(inp,list){
+  const ul=document.createElement('ul');ul.className='ac';ul.setAttribute('role','listbox');ul.hidden=true;inp.parentNode.appendChild(ul);let idx=-1,items=[];
+  const show=()=>{const q=inp.value.trim().toLowerCase();items=list().filter(c=>c.toLowerCase().includes(q)).slice(0,7);idx=-1;ul.innerHTML=items.map((c,i)=>`<li role="option" data-i="${i}">${c}<small>${C[c][2]}</small></li>`).join('');ul.hidden=!items.length};
+  const pick=i=>{inp.value=items[i];ul.hidden=true};
+  inp.addEventListener('input',show);inp.addEventListener('focus',show);inp.addEventListener('blur',()=>setTimeout(()=>ul.hidden=true,120));
+  inp.addEventListener('keydown',e=>{if(ul.hidden)return;if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();idx=(idx+(e.key==='ArrowDown'?1:-1)+items.length)%items.length;[...ul.children].forEach((l,i)=>l.classList.toggle('on',i===idx))}else if(e.key==='Enter'&&idx>=0){e.preventDefault();pick(idx)}else if(e.key==='Escape')ul.hidden=true});
+  ul.addEventListener('mousedown',e=>{const li=e.target.closest('li');if(li){e.preventDefault();pick(+li.dataset.i)}})}
+function setTab(k){$('#p-avia').hidden=k!=='avia';$('#p-train').hidden=k!=='train';$('#t-avia').setAttribute('aria-selected',k==='avia');$('#t-train').setAttribute('aria-selected',k==='train')}
+function paxUpdate(){const t=P.a+P.c+P.i;['a','c','i'].forEach(x=>$('#n-'+x).textContent=P[x]);$('#paxb').textContent=t+" yo'lovchi"}
+const find=(list,v)=>list.find(c=>c.toLowerCase()===v.trim().toLowerCase());
+let R=null;
+function search(k){
+  const p=k==='avia'?'a':'t',list=k==='avia'?AIR:RAIL,from=find(list,$('#'+p+'-from').value),to=find(list,$('#'+p+'-to').value),date=$('#'+p+'-date').value;
+  if(!from)return toast(k==='avia'?"Jo'nash shahrini ro'yxatdan tanlang (aeroport bo'lgan shahar)":"Jo'nash shahrini ro'yxatdan tanlang",'err');
+  if(!to)return toast("Borish shahrini ro'yxatdan tanlang",'err');
+  if(from===to)return toast("Jo'nash va borish shaharlari bir xil bo'lmasligi kerak",'err');
+  if(NAMES.indexOf(from)>12&&NAMES.indexOf(to)>12)return toast("Kamida bitta shahar O'zbekistonda bo'lishi kerak",'err');
+  if(!date)return toast("Jo'nash sanasini tanlang",'err');
+  const q={k,from,to,date,ret:k==='avia'?$('#a-ret').value:'',cls:$('#a-cls').value,wag:$('#t-wag').value,pax:k==='avia'?P.a+P.c+P.i:+$('#t-pax').value};
+  if(q.ret&&q.ret<date)return toast("Qaytish sanasi jo'nashdan oldin bo'lmasligi kerak",'err');
+  const box=$('#results');box.hidden=false;box.innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div>';box.scrollIntoView({behavior:'smooth'});
+  setTimeout(()=>{const items=k==='avia'?genFlights(q):genTrains(q);R={q,items,f:{al:'',tm:'',st:'',max:Infinity},sort:'cheap'};build()},600)}
+const minP=it=>R.q.k==='avia'?it.pr:Math.min(...it.wag.filter(w=>w.seats).map(w=>w.price),Infinity);
+function build(){
+  const {q,items}=R,av=q.k==='avia',prs=items.map(minP).filter(isFinite),mx=Math.ceil(Math.max(...prs,1)/1000)*1000;R.f.max=mx;
+  $('#results').innerHTML=`<h2>${esc(q.from)} → ${esc(q.to)} <small>· ${fd(q.date)}${q.ret?' – '+fd(q.ret):''}</small></h2>
+  <div class="glass ov bar">${av?`<label class="f"><span>Narx (gacha): <b id="pv">${money(mx)}</b></span><input type="range" id="fp" min="0" max="${mx}" step="10000" value="${mx}"></label>
+  <label class="f"><span>Aviakompaniya</span><select id="fal"><option value="">Barchasi</option>${[...new Set(items.map(i=>i.al))].map(a=>`<option>${a}</option>`).join('')}</select></label>
+  <label class="f"><span>Uchish vaqti</span><select id="ftm"><option value="">Istalgan</option><option value="m">Ertalab (05–12)</option><option value="d">Kunduzi (12–18)</option><option value="e">Kechqurun (18–24)</option></select></label>
+  <label class="f"><span>To'xtashlar</span><select id="fst"><option value="">Barchasi</option><option value="0">To'g'ridan-to'g'ri</option><option value="1">1 ta to'xtash</option></select></label>`:
+  `<label class="f"><span>Jo'nash vaqti</span><select id="ftm"><option value="">Istalgan</option><option value="m">Ertalab (05–12)</option><option value="d">Kunduzi (12–18)</option><option value="e">Kechqurun (18–24)</option></select></label>`}</div>
+  <div class="sort" role="group" aria-label="Saralash">${[['cheap','Eng arzon'],['fast','Eng tez'],['best',av?'Eng yaxshi':'Eng erta']].map(([v,l])=>`<button data-sort="${v}" aria-pressed="${v==='cheap'}">${l}</button>`).join('')}<small style="align-self:center;margin-left:auto" id="cnt"></small></div><div id="list"></div>`;draw()}
+const slot=m=>{const h=(m/60|0)%24;return h>=5&&h<12?'m':h>=12&&h<18?'d':'e'};
+function draw(){
+  const {q,items,f}=R,av=q.k==='avia';
+  let a=items.filter(i=>minP(i)<=f.max&&(!f.tm||slot(i.dep)===f.tm)&&(!av||(!f.al||i.al===f.al)&&(f.st===''||i.st==+f.st)));
+  const key={cheap:minP,fast:i=>av?i.du:i.du,best:i=>av?i.pr*i.du/100000:i.dep}[R.sort];a.sort((x,y)=>key(x)-key(y));
+  $('#cnt').textContent=a.length+' ta natija';
+  $('#list').innerHTML=a.length?a.map(i=>av?fCard(i):tCard(i)).join(''):`<p class="empty">${av?"Mos reyslar topilmadi. Filtrlarni o'zgartiring.":"Bu yo'nalishda tanlangan sana/vagon uchun poyezd topilmadi."}</p>`}
+const pax$=q=>q.pax;
+function fCard(i){const {q}=R,arr=i.dep+i.du,ini=i.al.split(' ').map(w=>w[0]).join('').slice(0,2);
+  return `<article class="glass card"><div class="al"><b class="lg" style="background:hsl(${i.h} 65% 48%)">${ini}</b><div><strong>${i.al}</strong><br><small>${q.cls}${q.ret?' · borish-qaytish':''}</small></div></div>
+  <div class="tt"><div><b>${tm(i.dep)}</b><small>${C[q.from][2]}</small></div><div class="ln"><small>${dur(i.du)}</small><i></i><small>${i.st?'1 ta to\'xtash':"To'g'ridan-to'g'ri"}</small></div><div><b>${tm(arr)}</b>${arr>=1440?'<small>+1</small> ':''}<small>${C[q.to][2]}</small></div></div>
+  <div class="pr"><b>${money(i.pr)}</b><button class="btn" data-pick="${i.id}">Tanlash</button></div></article>`}
+function tCard(i){const {q}=R;
+  return `<article class="glass card"><div><strong>${esc(i.n)}</strong><br><small>Poyezd №${i.no}</small></div>
+  <div><div class="tt"><div><b>${tm(i.dep)}</b><small>${esc(q.from)}</small></div><div class="ln"><small>${dur(i.du)}</small><i></i></div><div><b>${tm(i.arr)}</b><small>${esc(q.to)}</small></div></div>
+  <div class="wg">${i.wag.map(w=>`<span>${w.t}: <b>${money(w.price)}</b> · ${w.seats?w.seats+' joy':"joy yo'q"}</span>`).join('')}</div></div>
+  <div class="pr"><button class="btn" data-seat="${i.id}">Joy tanlash</button></div></article>`}
+
+/* ===== 6. POYEZD JOYLARI ===== */
+let S=null;
+function seatModal(t){S={t,w:Math.max(0,t.wag.findIndex(w=>w.seats)),sel:new Set()};drawSeats()}
+function drawSeats(){
+  const {t,w:wi,sel}=S,w=t.wag[wi],tot=TOT[w.t],cols=w.t==='SV/Lyuks'?2:4,rg=seeded(t.id+w.t),occ=new Set(),idx=[...Array(tot).keys()].sort(()=>rg()-.5).slice(0,tot-Math.min(w.seats,tot)).forEach(x=>occ.add(x));
+  let s='';for(let i=0;i<tot;i++){s+=`<button type="button" class="seat${sel.has(i)?' sel':''}" data-s="${i}" ${occ.has(i)?'disabled':''} aria-label="${i+1}-joy${occ.has(i)?' band':''}" aria-pressed="${sel.has(i)}">${i+1}</button>`;if(cols===4&&i%4===1)s+='<span></span>'}
+  const n=R.q.pax,total=w.price*sel.size;
+  modal(`<h3>${esc(t.n)} №${t.no} · ${tm(t.dep)} → ${tm(t.arr)}</h3><div class="tabs" role="tablist">${t.wag.map((x,i)=>`<button role="tab" aria-selected="${i===wi}" data-w="${i}" ${x.seats?'':'disabled'}>${x.t}</button>`).join('')}</div>
+  <small>Narx: ${money(w.price)} / joy · Tanlang: ${n} ta joy · <span style="color:var(--acc)">■</span> tanlangan, <span>▒</span> band</small>
+  <div class="seats" style="grid-template-columns:${cols===4?'repeat(2,40px) 18px repeat(2,40px)':'repeat(2,40px)'}">${s}</div>
+  <div class="sum">Tanlangan joylar: <b>${[...sel].sort((a,b)=>a-b).map(x=>x+1).join(', ')||'—'}</b><br>Jami: <b>${money(total)}</b></div><button class="btn" style="width:100%" data-seatgo ${sel.size===n?'':'disabled'}>Davom etish</button>`,'640px')}
+
+/* ===== 7. BRON QILISH ===== */
+function pickFlight(id){const i=R.items.find(x=>x.id===id),{q}=R,tot=i.pr*(P.a+P.c)+i.pr*.1*P.i;
+  book({kind:'avia',title:i.al,route:`${q.from} → ${q.to}`,date:q.date,time:`${tm(i.dep)} → ${tm(i.dep+i.du)}`,detail:`${q.cls}${q.ret?', borish-qaytish':''}`,total:tot,pax:q.pax})}
+function book(it){
+  if(!me()){pending=it;toast("Davom etish uchun tizimga kiring");return authModal('login')}
+  const u=me();let h=`<h3>Yo'lovchi ma'lumotlari</h3><div class="sum"><b>${esc(it.title)}</b> · ${esc(it.route)}<br>${fd(it.date)} · ${it.time}<br>${esc(it.detail)} · <b>${money(it.total)}</b></div><form id="pf" novalidate>`;
+  for(let i=0;i<it.pax;i++)h+=`<b>${i+1}-yo'lovchi</b><div class="row2"><div class="fl2"><label for="pn${i}">Ism</label><input id="pn${i}" value="${i?'':esc(u.ism)}"><small class="msg"></small></div><div class="fl2"><label for="pl${i}">Familiya</label><input id="pl${i}" value="${i?'':esc(u.fam)}"><small class="msg"></small></div></div><div class="fl2"><label for="pp${i}">Pasport (masalan AB1234567)</label><input id="pp${i}" maxlength="9"><small class="msg"></small></div>`;
+  modal(h+`<button class="btn" style="width:100%">To'lovga o'tish</button></form>`,'520px');$('#pf').onsubmit=e=>{e.preventDefault();let ok=true;
+    for(let i=0;i<it.pax;i++)[['pn',v=>v.trim().length>1],['pl',v=>v.trim().length>1],['pp',v=>/^[A-Z]{2}\d{7}$/i.test(v)]].forEach(([p,fn])=>{const el=$('#'+p+i),g=fn(el.value);el.closest('.fl2').className='fl2 '+(g?'ok':'bad');el.closest('.fl2').querySelector('.msg').textContent=g?'':"To'g'ri to'ldiring";ok=ok&&g});
+    ok?payStep(it):toast("Ma'lumotlarni to'g'ri kiriting",'err')}}
+function payStep(it){modal(`<h3>To'lov usuli</h3><form id="pay">${[['Payme','💠'],['Click','🔷'],['Uzcard / Humo','💳']].map(([n,e],i)=>`<label class="pay"><input type="radio" name="m" value="${n}" ${i?'':'checked'}><span style="font-size:1.4rem">${e}</span><b>${n}</b></label>`).join('')}<small>Demo rejim: haqiqiy to'lov amalga oshirilmaydi.</small><button class="btn" style="width:100%;margin-top:12px">To'lash — ${money(it.total)}</button></form>`);
+  $('#pay').onsubmit=e=>{e.preventDefault();const m=new FormData(e.target).get('m');$('#mbody').innerHTML='<div class="spin" role="status"></div><p class="ok-c">To\'lov amalga oshirilmoqda…</p>';setTimeout(()=>success(it,m),1500)}}
+function qr(code){const r=seeded(code),n=21;let s=`<svg viewBox="0 0 ${n} ${n}" class="qr" role="img" aria-label="QR-kod (demo)" shape-rendering="crispEdges">`;
+  for(let y=0;y<n;y++)for(let x=0;x<n;x++){let on;const fin=(x<8||x>n-9)&&(y<8||y>n-9)&&!(x>n-9&&y>n-9);
+    if(fin){const a=x<8?x:x-13,b=y<8?y:y-13;on=a<7&&b<7&&(a==0||a==6||b==0||b==6||(a>1&&a<5&&b>1&&b<5))}else on=r()>.5;if(on)s+=`<rect x="${x}" y="${y}" width="1" height="1"/>`}return s+'</svg>'}
+function success(it,m){const code='SU-'+Math.random().toString(36).slice(2,8).toUpperCase(),u=me(),k='skyuz_t_'+u.id,all=store.get(k,[]);
+  all.unshift({...it,code,paid:m,at:Date.now()});store.set(k,all);
+  modal(`<div class="ok-c"><svg class="ck" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44"/><path d="M30 52l14 14 28-30"/></svg><h3>To'lov muvaffaqiyatli!</h3><p>${esc(it.route)} · ${fd(it.date)}</p><small>Bron kodi: <b>${code}</b></small>${qr(code)}<button class="btn" data-act="tickets" style="width:100%">Mening chiptalarim</button></div>`);toast("Chipta muvaffaqiyatli bron qilindi")}
+function ticketsModal(){const u=me();if(!u){pending=null;return authModal('login')}const a=store.get('skyuz_t_'+u.id,[]);
+  modal(`<h3>Mening chiptalarim</h3>${a.length?a.map(t=>`<div class="glass sum" style="margin-bottom:10px"><b>${t.kind==='avia'?'✈️':'🚆'} ${esc(t.title)}</b> · ${esc(t.route)}<br><small>${fd(t.date)} · ${t.time} · ${t.pax} yo'lovchi · ${esc(t.detail)}</small><br><b>${money(t.total)}</b> · <small>${esc(t.paid)} · kod: ${t.code}</small></div>`).join(''):`<p class="empty">Hozircha chiptalar yo'q.</p>`}`,'520px')}
+function profileModal(){const u=me();if(!u)return authModal('login');modal(`<h3>Profil</h3><div class="sum"><b>${esc(u.ism)} ${esc(u.fam)}</b><br>${esc(u.tel)}<br>${esc(u.email)}<br><small>Chiptalar soni: ${store.get('skyuz_t_'+u.id,[]).length}</small></div><button class="btn ghost" data-act="tickets" style="width:100%;margin-bottom:8px">Mening chiptalarim</button><button class="btn" data-act="logout" style="width:100%">Chiqish</button>`)}
+
+/* ===== 8. OMMABOP YO'NALISHLAR ===== */
+const ROUTES=[['Toshkent','Samarqand','train','🕌'],['Toshkent','Buxoro','train','🏛️'],['Toshkent','Xiva / Urganch','avia','🏰'],['Toshkent','Nukus','avia','🌅'],['Toshkent','Istanbul','avia','🌉'],['Toshkent','Dubay','avia','🏙️'],['Toshkent','Moskva','avia','❄️'],['Toshkent','Seul','avia','🌸']];
+function routesInit(){$('#routes').innerHTML=ROUTES.map(([a,b,k,e],i)=>{const d=km(a,b),p=k==='avia'?(160000+d*(NAMES.indexOf(b)>12?520:430))*.85:RATE['Plats-kart']*d*1.25*.8;
+  return `<button class="glass rt" data-route="${i}"><span style="font-size:2rem">${e}</span><b>${a.split(' ')[0]} – ${b.split(' ')[0]}</b><span class="tag">${k==='avia'?'✈️ Avia':'🚆 Poyezd'}</span><div class="p">dan ${money(p)}</div></button>`}).join('')}
+
+/* ===== 9. HODISALAR ===== */
+document.addEventListener('mousemove',e=>{const g=e.target.closest&&e.target.closest('.glass');if(g){const r=g.getBoundingClientRect();g.style.setProperty('--mx',e.clientX-r.left+'px');g.style.setProperty('--my',e.clientY-r.top+'px')}});
+document.addEventListener('click',e=>{
+  const t=e.target,c=s=>t.closest(s);let x;
+  if(c('[data-close]')||t.id==='mdl')return closeModal();
+  if(x=c('[data-tab]')){setTab(x.dataset.tab);if(x.closest('.bnav')||x.tagName==='A')$('#search').scrollIntoView({behavior:'smooth'});if(x.tagName==='A')e.preventDefault();return}
+  if(x=c('[data-auth]'))return authModal(x.dataset.auth);
+  if(x=c('[data-act]')){e.preventDefault();const a=x.dataset.act;({login:()=>authModal('login'),signup:()=>authModal('signup'),logout:()=>{closeModal();logout()},tickets:ticketsModal,me:profileModal,forgot:()=>toast("Tiklash havolasi yuborildi (demo)")})[a]();return}
+  if(x=c('[data-eye]')){const i=$('#'+x.dataset.eye);i.type=i.type==='password'?'text':'password';return}
+  if(x=c('[data-swap]')){const p=x.dataset.swap,a=$('#'+p+'-from'),b=$('#'+p+'-to');[a.value,b.value]=[b.value,a.value];x.style.transform=`rotate(${(x._r=(x._r||0)+180)}deg)`;return}
+  if(c('#paxb')){const b=$('#paxb'),o=$('#pop').hidden;$('#pop').hidden=!o;b.setAttribute('aria-expanded',o);return}
+  if(x=c('[data-p]')){const k=x.dataset.p,v=P[k]+ +x.dataset.d,n={...P,[k]:v};if(n.a<1||n.c<0||n.i<0||n.i>n.a||n.a+n.c+n.i>9)return toast("Yo'lovchilar soni cheklovi: 1–9, chaqaloq ≤ kattalar",'err');P[k]=v;return paxUpdate()}
+  if(!c('#pop'))$('#pop').hidden=true;
+  if(c('#ub')){const m=$('#um');m.hidden=!m.hidden;$('#ub').setAttribute('aria-expanded',!m.hidden);return}else if($('#um'))$('#um').hidden=true;
+  if(x=c('[data-sort]')){R.sort=x.dataset.sort;$$('[data-sort]').forEach(b=>b.setAttribute('aria-pressed',b===x));return draw()}
+  if(x=c('[data-pick]'))return pickFlight(x.dataset.pick);
+  if(x=c('[data-seat]'))return seatModal(R.items.find(i=>i.id===x.dataset.seat));
+  if(x=c('[data-w]')){S.w=+x.dataset.w;S.sel.clear();return drawSeats()}
+  if(x=c('[data-s]')){const i=+x.dataset.s;if(S.sel.has(i))S.sel.delete(i);else if(S.sel.size<R.q.pax)S.sel.add(i);else toast(`Faqat ${R.q.pax} ta joy tanlash mumkin`,'err');return drawSeats()}
+  if(c('[data-seatgo]')){const {t,w,sel}=S,W=t.wag[w],q=R.q;return book({kind:'train',title:`${t.n} №${t.no}`,route:`${q.from} → ${q.to}`,date:q.date,time:`${tm(t.dep)} → ${tm(t.arr)}`,detail:`${W.t}, joylar: ${[...sel].sort((a,b)=>a-b).map(v=>v+1).join(', ')}`,total:W.price*sel.size,pax:q.pax})}
+  if(x=c('[data-route]')){const [a,b,k]=ROUTES[+x.dataset.route],p=k==='avia'?'a':'t';setTab(k);$('#'+p+'-from').value=a;$('#'+p+'-to').value=b;$('#search').scrollIntoView({behavior:'smooth'});toast("Qidiruv formasi to'ldirildi");return}
+});
+document.addEventListener('input',e=>{const el=e.target;
+  if(el.matches('#modal [data-mask],[data-mask]'))el.value=mask(el.value);
+  if(el.id==='l-id'&&/^[+\d]/.test(el.value.trim()))el.value=mask(el.value);
+  if(el.dataset&&el.dataset.v){checkF(el,el.closest('form'));if(el.id==='s-pw'){const s=strength(el.value);$$('#str i').forEach((b,i)=>b.style.background=i<s?['#ff5d7a','#ffb84d','#7bd88f','#2ee59d'][s-1]:'');$('#strl').textContent=el.value?['Juda zaif','Zaif',"O'rtacha",'Kuchli','Juda kuchli'][s]:'';const p2=$('#s-pw2');p2.value&&checkF(p2,el.closest('form'))}}
+  if(el.id==='fp'){R.f.max=+el.value;$('#pv').textContent=money(el.value);draw()}});
+document.addEventListener('focusin',e=>{if(e.target.dataset&&e.target.dataset.mask!==undefined&&!e.target.value)e.target.value='+998'});
+document.addEventListener('change',e=>{const i=e.target.id;if(i==='fal'){R.f.al=e.target.value;draw()}if(i==='ftm'){R.f.tm=e.target.value;draw()}if(i==='fst'){R.f.st=e.target.value;draw()}});
+document.addEventListener('submit',e=>{e.preventDefault();const f=e.target;if(f.id==='p-avia')search('avia');else if(f.id==='p-train')search('train');else if(f.id==='af')submitAuth(f)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('#mdl').hidden)closeModal();$('#pop').hidden=true}
+  if(e.key==='Tab'&&!$('#mdl').hidden){const f=$$('#mbox button:not([disabled]),#mbox input,#mbox a[href]'),a=f[0],z=f[f.length-1];if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus()}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}}});
+$('#theme').onclick=()=>{const d=document.documentElement,n=d.dataset.theme==='dark'?'light':'dark';d.dataset.theme=n;try{localStorage.setItem('skyuz_theme',n)}catch{}};
+
+/* ===== 10. ISHGA TUSHIRISH ===== */
+(function init(){
+  let th=null;try{th=localStorage.getItem('skyuz_theme')}catch{}
+  document.documentElement.dataset.theme=th||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+  ac($('#a-from'),()=>AIR);ac($('#a-to'),()=>AIR);ac($('#t-from'),()=>RAIL);ac($('#t-to'),()=>RAIL);
+  $$('input[type=date]').forEach(d=>{d.min=iso();d.value=d.id.endsWith('ret')?'':iso(1)});
+  $('#a-from').value='Toshkent';$('#t-from').value='Toshkent';
+  renderNav();routesInit();paxUpdate();
+})();
+</script>
+</body>
+</html>
